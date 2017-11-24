@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Contacts</title>
+
+    <link rel="stylesheet" href="css/qunit-2.4.1.css">
+    <link rel="stylesheet" href="css/contact.css">
+    <script src="js/qunit-2.4.1.js"></script>
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="js/script.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="src/phone.js"></script>
+    <script src="src/mail.js"></script>
+    <script src="src/contact.js"></script>
+    <script src="src/contacts.js"></script>
+    <script src="src/builder.js"></script>
+    <script src="src/contactIterator.js"></script>
+    <script src="src/storage.js"></script>
+
+    <script src="src/view.js"></script>
+    <script src="src/model.js"></script>
+    <script src="src/controller.js"></script>
+
+    <!-- BEGIN - La fonction de construction -->
+    <script>
+        var build = function () {
+          var model = new Contact.Model();
+          var view = new Contact.View(model);
+          var controller = new Contact.Controller(model, view);
+        };
+  
+        var init = function () {
+          var contact = new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Eric', 'RAMAT', '0616642258');
+  
+          contact.addPhone(new Contact.Phone('0321465676', Contact.PhoneCategory.PRO, Contact.PhoneType.PHONE));
+          contact.addMail(new Contact.Mail('ramat@lisic.univ-littoral.fr', Contact.MailCategory.PRO));
+          contact.addMail(new Contact.Mail('eric.ramat@gmail.com', Contact.MailCategory.PERSO));
+          contact.addTag('prof');
+          Contact.Contacts.instance().add(contact);
+          Contact.Contacts.instance().add(new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Jacques', 'DURAND', '0699785487'));
+          Contact.Contacts.instance().add(new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Pierre', 'DUPONT', '0636532535'));
+          Contact.Contacts.instance().add(new Contact.Builder().createContactWithProfessionalMobile(
+            Contact.Gender.MR, 'Jean', 'DUPOND', '0612343000'));
+        }
+      </script>
+      <!-- END - La fonction de construction -->
+  
+      <script>
+
+
+
+        $(document).ready(function () {
+          init();
+          build();
+        });
+      </script>
+
+    <!-- BEGIN - Les tests -->
+    <script>
+        QUnit.test("fields form tests", function (assert) {
+            assert.ok($('#addContact'));
+            assert.ok($('#addContact').find('input').length === 3);
+            assert.ok($('#envoyer').text() === "Ajouter");
+            assert.ok($('#annuler').text() === "Annuler");
+        });
+
+        QUnit.test("add contact", function (assert) {
+            var instance = Contact.Contacts.instance();
+            var saveSizeInstance = instance.size();
+
+            $('#nom').val('good');
+            $('#prenom').val('contact');
+            $('#mail').val('good@contact.com');
+
+            $('#envoyer').click();
+
+            assert.ok(instance.size() === saveSizeInstance+1);
+        });
+
+        QUnit.test("add contact", function (assert) {
+            var instance = Contact.Contacts.instance();
+            var saveSizeInstance = instance.size();
+
+            $('#nom').val('bad');
+            $('#prenom').val('contact');
+            $('#mail').val('bad@contact.com');
+
+            $('#annuler').click();
+
+            assert.ok(instance.size() === saveSizeInstance);
+        });
+
+    </script>
+    <!-- END - Les tests -->
+
+</head>
+<body>
+<div id="contacts" ></div>
+<div id="creation-contact">
+    <form id="addContact" style="display: flex; flex-direction: column;">
+        <h1>Création d'un contact</h1>
+        <p>
+            <label class="col-md-1" for="nom">Nom: </label>
+            <input type="text" name="nom" id="nom"/>
+        </p>
+        <p>
+            <label class="col-md-1" for="prenom">Prénom: </label>
+            <input type="text" name="prenom" id="prenom" />
+        </p>
+        <p>
+            <label class="col-md-1" for="mail">Mail: </label>
+            <input type="email" name="mail" id="mail"/>
+        </p>
+        <p>
+            <button id="annuler" class="btn btn-danger col-md-1 formButtonSubmit">Annuler</button>
+            <button id="envoyer" class="btn btn-success col-md-1 formButtonSubmit">Ajouter</button>
+        </p>
+        
+    </form>
+    <span id="testAffiche">test: </span>
+</div>
+<div id="qunit"></div>
+</body>
+</html>

@@ -64,23 +64,69 @@
     <!-- BEGIN - Les tests -->
     <script>
       QUnit.test("header tests", function (assert) {
-        assert.ok(false);
+        var tabTitle = ["First name", "Last name", "Phones", "Mails", "Tags", "Actions"];
+        $('div#contacts th').each(function(index){
+          var title = $(this).html();
+          assert.ok(title === tabTitle[index]);
+        });
       });
 
       QUnit.test("list tests", function (assert) {
-        assert.ok(false);
+        var firstNames = $('td#cellFirstName');
+        var lastNames = $('td#cellLastName');
+        var i=0;
+        var instance = Contact.Contacts.instance();
+        var iterateur = instance.iterator();
+        while(iterateur.hasNext()){
+          var contactSuivant = iterateur.next();
+          assert.ok(contactSuivant.firstName(), firstNames.eq(i));
+          assert.ok(contactSuivant.lastName(), lastNames.eq(i));
+          i++;
+        }
       });
 
       QUnit.test("first entry tests", function (assert) {
-        assert.ok(false);
-      });
+        var instance = Contact.Contacts.instance();
+        var iterateur = instance.iterator();
+        var contact = iterateur.next();
+        var ligne = $('tr').eq(1).children('td');
 
+        assert.ok(contact.firstName(), ligne.eq(0));
+        assert.ok(contact.lastName(), ligne.eq(1));
+        assert.ok(contact.phones(), ligne.eq(2));
+        assert.ok(contact.mails(), ligne.eq(3));
+        assert.ok(contact.tags(), ligne.eq(4));
+      });
+        
       QUnit.test("remove contact tests", function (assert) {
-        assert.ok(false);
+        var instance = Contact.Contacts.instance();
+        var iterateur = instance.iterator();
+        var contact = iterateur.next();
+        var ligne = $('tr').eq(1).children('td');
+        $('div#contacts tr:nth-child(2) td:nth-child(6) a').click();
+        var newLigne = $('tr').eq(1).children('td');
+
+        // on verifie que la premiere ligne est différente de celle supprimer
+        for(var i=0; i < ligne.length; i++){
+          assert.ok(ligne.eq(i) != newLigne.eq(i));
+        }
+
+        assert.ok(contact.firstName() != newLigne.eq(0));
+        assert.ok(contact.lastName() != newLigne.eq(1));
       });
 
       QUnit.test("sort contact tests", function (assert) {
-        assert.ok(false);
+        var firstNames = $('td#cellLastName');
+        firstNames.sort();
+
+        $('#button_sort').click();
+
+        var newFirstNames = $('td#cellLastName');
+        console.log(firstNames);
+
+        for(var j=0; j<firstNames.length; j++){
+          assert.ok(firstNames.eq(j), newFirstNames.eq(j));
+        }
       });
     </script>
     <!-- END - Les tests -->
