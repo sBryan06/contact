@@ -116,16 +116,15 @@
       });
 
       QUnit.test("sort contact tests", function (assert) {
-        var firstNames = $('td#cellLastName');
-        firstNames.sort();
+        var lastNames = $('td#cellLastName');
+          lastNames.sort();
 
         $('#button_sort').click();
 
-        var newFirstNames = $('td#cellLastName');
-        console.log(firstNames);
+        var newlastNames = $('td#cellLastName');
 
-        for(var j=0; j<firstNames.length; j++){
-          assert.ok(firstNames.eq(j), newFirstNames.eq(j));
+        for(var j=0; j<lastNames.length; j++){
+          assert.ok(lastNames.eq(j), newlastNames.eq(j));
         }
       });
     </script>
